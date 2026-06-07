@@ -731,7 +731,7 @@ function Header({ isDark, setIsDark, lang, setLang, nav }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-background/80 backdrop-blur-md transition-colors duration-500">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-6">
-        <a href="#top" className="shrink-0 transition-all duration-300 ease-out hover:text-accent">
+        <a href="#top" className="w-40 shrink-0 transition-all duration-300 ease-out hover:text-accent">
           <TypingBrand key={lang} lang={lang} />
         </a>
 
