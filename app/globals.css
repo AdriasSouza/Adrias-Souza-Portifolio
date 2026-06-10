@@ -319,6 +319,46 @@ body::after {
   transform-origin: center;
 }
 
+/* ─── 3D flip cards (two-layer: outer bounces, inner flips) ─────────────── */
+
+/*
+  Outer wrapper (.card-root):  handles perspective + hover-lift translation.
+  Inner wrapper (.flip-inner): absolute-fills the outer, drives rotateY.
+  This separation prevents CSS transform conflicts and fixes the height-
+  collapse bug that occurred when min-height parents contained height:100%
+  children — absolute inset:0 always fills the nearest positioned ancestor.
+*/
+
+/* Kept as a CSS hook so the reduced-motion rule below can disable the
+   transition without chasing arbitrary Tailwind duration classes.          */
+.flip-inner { /* transforms are driven by Tailwind arbitrary-value classes */ }
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Card surface shared by all flip faces. Border-radius / overflow are set
+   per element via Tailwind so the rounded corners clip correctly.          */
+.surface-face {
+  background-color: var(--surface);
+  border: 2px solid var(--line);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Accent border on any hover — triggered by the outer card-root group */
+.card-root:hover .surface-face {
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--line));
+}
+
 /* ─── Reduced-motion ────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -329,5 +369,6 @@ body::after {
   .rb-stars-near { animation: none; }
   body,
   .surface-card,
-  .skill-chip { transition: none; }
+  .skill-chip,
+  .flip-inner { transition: none; }
 }

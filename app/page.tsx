@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import type { ComponentType } from "react";
+import type { ComponentType, KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
 import Image from "next/image";
 import {
   Activity,
   ArrowRight,
-  ArrowUpRight,
   BarChart3,
+  BookOpen,
   Boxes,
-  Building2,
+  Database,
   FileText,
   Gamepad2,
   Globe,
@@ -18,13 +18,24 @@ import {
   Mail,
   Monitor,
   Moon,
+  RotateCw,
   ScanEye,
   ShieldCheck,
+  Sparkles,
   Sun,
+  Trophy,
+  Undo2,
   Users,
 } from "lucide-react";
+import {
+  SiPython, SiFastapi, SiDjango, SiSpringboot,
+  SiAngular, SiTypescript, SiTailwindcss,
+  SiPostgresql, SiDocker, SiGit,
+} from "react-icons/si";
+import { FaJava } from "react-icons/fa";
 
 const PORTRAIT_SRC = "/images/adrias-portrait.png";
+const PORTRAIT_REAL_SRC = "/images/portrait-real.jpg";
 
 /* ══════════════════════════════════════════════════════════════════════════
    BRAND SVGs  (lucide-react 1.17 dropped logo icons)
@@ -283,7 +294,7 @@ function DinoGame({ lang }: { lang: Lang }) {
       document.removeEventListener("keydown", onKey);
       canvas.removeEventListener("touchstart", onTouch);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <canvas
@@ -324,6 +335,7 @@ interface ProjectText {
   category: string;
   title: string;
   description: string;
+  backstory: string;
   stack: string[];
 }
 
@@ -333,16 +345,25 @@ interface ExperienceItem {
   system: string;
   focus: string;
   projects: string[];
+  achievements: string[];
+}
+
+interface EducationCard {
+  tag: string;
+  title: string;
+  subtitle: string;
+  backTitle: string;
+  backLines: string[];
 }
 
 interface Dict {
   nav: { projects: string; about: string; skills: string; experience: string; contact: string };
   hero: { greeting: string; headline: string; headlineAccent: string; sub: string; cta1: string; cta2: string; scroll: string };
-  labels: { confidential: string; viewOnGithub: string };
+  labels: { confidential: string; viewOnGithub: string; back: string; backstoryTitle: string; achievementsTitle: string; hoverHint: string };
   sections: { work: string; about: string; contact: string };
   projects: ProjectText[];
-  highlights: [{ title: string; text: string }, { title: string; text: string }, { title: string; text: string }];
-  about: { p1a: string; sefaz: string; p1b: string; p2a: string; ufac: string; p2b: string; portraitLabel: string };
+  education: [EducationCard, EducationCard, EducationCard];
+  about: { p1a: string; sefaz: string; p1b: string; p2a: string; ufac: string; p2b: string; eduSection: string };
   skills: { section: string; cats: readonly [string, string, string, string] };
   experience: { section: string; entries: ExperienceItem[] };
   contact: { headline: string; sub: string; built: string; rights: string };
@@ -358,77 +379,116 @@ const DICT: Record<Lang, Dict> = {
       sub: "Desenvolvedor Full-Stack & Analista de Dados. Construindo desde interfaces com UX impecável até microsserviços e motores de auditoria fiscal.",
       cta1: "Ver Projetos", cta2: "Entrar em Contato", scroll: "role",
     },
-    labels: { confidential: "Interno / Confidencial", viewOnGithub: "Ver no GitHub" },
+    labels: { confidential: "Interno / Confidencial", viewOnGithub: "Ver no GitHub", back: "Voltar", backstoryTitle: "Nos bastidores", achievementsTitle: "Conquistas & Momentos-chave", hoverHint: "passe o mouse" },
     sections: { work: "Projetos", about: "Sobre", contact: "Contato" },
     projects: [
       {
         category: "Fiscal & APEX",
         title: "Sistema Tucandeira",
-        description: "Aplicação Oracle APEX integrada a um middleware Java (Spring Boot) para controle de mercadorias no Posto Fiscal. Destaque: gerador PDF proprietário para emissão de GNRE que eliminou dependência de API externa, reduzindo erros e aumentando o controle do processo.",
+        description: "Aplicação Oracle APEX integrada a um middleware Java (Spring Boot) para controle de mercadorias no Posto Fiscal. Integração PIX em tempo real e automação fiscal.",
+        backstory: "O maior gargalo era a dependência de uma API externa instável para gerar as guias GNRE. Desenvolvi um gerador de PDF proprietário no backend (Spring Boot) que espelha o documento oficial. Agora, a API de origem fornece apenas o recibo (SOAP), enquanto nós temos controle total sobre o layout e a geração da guia, aplicando conceitos de Poka-Yoke para reduzir erros operacionais no posto fiscal.",
         stack: ["Oracle APEX", "Spring Boot", "PIX"],
       },
       {
         category: "Dados & BI",
         title: "Dashboards Inteligência Fiscal",
-        description: "Dashboards analíticos e mapas interativos em Tableau. Um focado na classificação demográfica e regional do trânsito de gado; o outro no Índice de Participação dos Municípios (IPM).",
+        description: "Dashboards analíticos e mapas interativos em Tableau. Extração (SQL) e tratamento de dados fiscais estratégicos da Receita Estadual.",
+        backstory: "Transformei bases de dados brutas em ferramentas de decisão. Criei um painel mapeando o trânsito bovino (classificando sexo, idade e rotas regionais) e um dashboard focado no Índice de Participação dos Municípios (IPM), exibindo a distribuição de cotas de arrecadação em mapas dinâmicos para audição visual rápida.",
         stack: ["Tableau", "Eng. de Dados", "SQL"],
       },
       {
         category: "Game Dev",
         title: "Tic Tac Boom",
-        description: "Protótipo caótico de jogo da velha 2D em Godot 4.x, com 'Cartas do Caos' que alteram as regras em tempo real e grades dinâmicas de 3×3 a 5×5.",
+        description: "Protótipo caótico de jogo da velha 2D em Godot 4.x, com 'Cartas do Caos' que alteram as regras em tempo real e grades dinâmicas de 3x3 a 5x5.",
+        backstory: "O desafio de Game Design e programação foi criar uma arquitetura de estado (State Machine) flexível para suportar modificadores de regras durante a partida. O tabuleiro reage ativamente às cartas jogadas, exigindo uma lógica de verificação de vitória (match-checking) totalmente dinâmica para lidar com grids expansíveis e condições mutáveis.",
         stack: ["Godot", "GDScript", "Game Design"],
       },
       {
         category: "Desktop & Python",
         title: "Autenticador de Arquivos",
-        description: "Aplicação desktop Windows (Python + CustomTkinter) que automatiza a verificação de integridade de arquivos via hash MD5 e gera relatórios PDF formais com ReportLab.",
+        description: "Aplicação desktop nativa para Windows (Python + CustomTkinter) para verificação de integridade de arquivos em mídias físicas com hash MD5.",
+        backstory: "A equipe de auditoria precisava de uma forma inviolável de provar que arquivos de mídias físicas não foram adulterados. Empacotei um gerador de 'impressão digital' criptográfica (MD5) em um executável (.exe) de interface amigável. O sistema varre os arquivos e gera um laudo formal em PDF via ReportLab, utilizado como prova íntegra nos processos.",
         stack: ["Python", "CustomTkinter", "ReportLab"],
       },
       {
         category: "Angular & Django",
         title: "SGCC-INSS",
-        description: "Sistema de catalogação para identificar obsolescência de hardware em agências da Previdência Social, desenvolvido durante estágio no INSS.",
+        description: "Sistema corporativo desenvolvido para catalogar e monitorar a defasagem tecnológica do hardware nas Agências da Previdência Social.",
+        backstory: "A gerência sofria com a falta de visibilidade sobre computadores obsoletos. Modelei o banco de dados relacional e estruturei a interface Angular para consumir a API Django. O resultado foi um fluxo de inventário veloz para os técnicos de campo e relatórios estratégicos para justificar orçamentos e trocas de equipamento.",
         stack: ["Angular", "Django REST", "MySQL"],
       },
       {
         category: "Fiscal & Full-Stack",
         title: "G-TRIB",
-        description: "Sistema desenvolvido para a SEFAZ para acompanhar o andamento de fluxos e gerar métricas de desempenho de auditores, como tempo gasto por processo e nível de complexidade.",
+        description: "Sistema para a SEFAZ monitorar o andamento de fluxos processuais tributários e levantar métricas de desempenho da equipe auditora.",
+        backstory: "Construído em ambiente hands-on real. Arquitetei um backend capaz de processar o tempo transcorrido por processo e ponderar seu nível de complexidade. No front-end, o desafio foi converter essas métricas brutas em interfaces visuais intuitivas, permitindo aos gestores identificar rapidamente gargalos na linha de produção da auditoria fiscal.",
         stack: ["Spring Boot", "Angular", "Bootstrap"],
       },
       {
         category: "SRE & QA",
         title: "TaskNote Academy",
-        description: "Gerenciador de tarefas com foco intenso em SRE e Qualidade. Implementa testes E2E automatizados com Playwright (redução de toil), infraestrutura isolada via Docker, observabilidade em tempo real com Prometheus/Grafana e validação de resiliência com testes de Chaos Engineering.",
-        stack: ["Java 17", "Spring Boot", "Docker", "Playwright", "Grafana"],
+        description: "Gerenciador de tarefas com foco em usabilidade preventiva (Poka-Yoke) e liderança técnica de equipe.",
+        backstory: "Atuei como líder técnico e mentor da equipe, guiando o escopo do projeto para atender às expectativas da banca avaliadora. No código, foquei em proteger o banco de dados implementando conceitos de Poka-Yoke e validações estritas diretamente no front-end. Essa experiência de guiar o usuário para o 'caminho feliz' e reduzir o atrito de erros visuais serviu como base para a arquitetura de interface que implementei mais tarde no sistema da Tucandeira.",
+        stack: ["JavaScript", "Liderança Técnica", "UX/UI"],
       },
       {
         category: "Automação & RH",
         title: "SGPS-WA",
-        description: "Sistema para automatizar inscrições e avaliações de candidatos em processos seletivos da Web Academy.",
-        stack: ["Angular", "Django", "MySQL"],
+        description: "Desenvolvimento de interface (Front-end) e modelagem de dados para o sistema de processos seletivos do Web Academy.",
+        backstory: "Após o levantamento de requisitos com o Product Owner, modelei o banco de dados e construí 100% das telas em Angular. O maior aprendizado deste projeto foi sobre gestão de tempo e dependências sistêmicas: devido a projetos paralelos e gargalos na equipe, a integração entre o front e a API não foi concluída a tempo. O projeto gerou excelentes entregáveis de interface e modelagem, mas me ensinou na prática o custo técnico da falta de integração contínua (CI).",
+        stack: ["Angular", "Bootstrap", "DB Modeling"],
       },
       {
         category: "Next.js & Design",
         title: "Portfólio Pessoal",
         description: "Portfólio interativo com estética retrô 16-bit, toggle de modo escuro/claro, mini-game Dino integrado como background animado e suporte bilíngue PT/EN.",
+        backstory: "Este site. Estética retrô 16-bit em Next.js e Tailwind v4, com um mini-game do Dino jogável renderizado em canvas como plano de fundo no modo claro, i18n PT/EN e estes cartões 3D que você está virando agora.",
         stack: ["Next.js", "TypeScript", "Tailwind CSS"],
       },
     ],
-    highlights: [
-      { title: "SEFAZ / AC", text: "Soluções fiscais e tributárias para a Secretaria de Estado da Fazenda do Acre." },
-      { title: "Mestrado — UFAC", text: "Mestrando em Ciência da Computação, em andamento." },
-      { title: "Visão Computacional", text: "Foco de pesquisa acadêmica ativa." },
+    education: [
+      {
+        tag: "Graduação",
+        title: "Sistemas de Informação",
+        subtitle: "UFAC · Conclusão Dez. 2025",
+        backTitle: "Bacharelado",
+        backLines: [
+          "Universidade Federal do Acre (UFAC)",
+          "Conclusão prevista: Dezembro de 2025",
+          "Foco em engenharia de software e dados",
+        ],
+      },
+      {
+        tag: "TCC",
+        title: "IA Generativa na Educação",
+        subtitle: "Pesquisa de conclusão de curso",
+        backTitle: "Trabalho de Conclusão",
+        backLines: [
+          "“Percepção e Impacto da IA Generativa na Educação Superior”",
+          "Estudo com alunos de Ciências Exatas da UFAC",
+          "Abordagem qualitativa · IA Generativa",
+        ],
+      },
+      {
+        tag: "Próx. passos",
+        title: "Visão Computacional",
+        subtitle: "Mestrado (pretendido)",
+        backTitle: "Pesquisa",
+        backLines: [
+          "Mirando um Mestrado em Ciência da Computação",
+          "Linha de pesquisa: Visão Computacional",
+          "Rigor com avaliação e casos de borda",
+        ],
+      },
     ],
     about: {
       p1a: "Sou desenvolvedor full-stack e analista de dados que entrega software de produção para o setor público — mais recentemente, engenhando soluções fiscais e tributárias para a ",
       sefaz: "SEFAZ/AC",
       p1b: ", a Secretaria de Estado da Fazenda do Acre. Meu trabalho abrange interfaces front-end refinadas, microsserviços Java / Spring Boot e pipelines de dados que transformam registros fiscais brutos em insights auditáveis.",
-      p2a: "Em paralelo, curso o ",
-      ufac: "Mestrado em Ciência da Computação na UFAC",
-      p2b: ", pesquisando Visão Computacional. A trajetória acadêmica me mantém próximo dos primeiros princípios — rigoroso com correção, avaliação e casos de borda — enquanto o trabalho de mercado me mantém entregando software confiável do qual usuários reais e auditores dependem.",
-      portraitLabel: "[ retrato pixel art ]",
+      p2a: "No meio acadêmico, estou concluindo o ",
+      ufac: "Bacharelado em Sistemas de Informação na UFAC",
+      p2b: " (Dezembro de 2025), com TCC sobre o impacto da IA Generativa no ensino superior — e mirando um mestrado em Visão Computacional. A trajetória acadêmica me mantém próximo dos primeiros princípios: rigoroso com correção, avaliação e casos de borda.",
+      eduSection: "Formação",
     },
     skills: {
       section: "Habilidades",
@@ -439,27 +499,37 @@ const DICT: Record<Lang, Dict> = {
       entries: [
         {
           period: "Mai 2025 – Presente",
-          role: "Desenvolvedor Júnior",
+          role: "Desenvolvedor Full-Stack & Analista de Dados",
           system: "VINT Global",
-          focus: "Manipulação e análise de dados, queries SQL, dashboards Tableau e soluções web corporativas com Oracle APEX",
+          focus: "Arquitetura de APIs, manipulação de dados complexos e desenvolvimento de soluções corporativas de alto impacto para a SEFAZ/AC.",
           projects: ["Dashboards IPM e Trânsito de Gado", "Sistema Tucandeira", "Autenticador de Arquivos"],
+          achievements: [
+            "Desenvolvi a API middleware (Java/Spring Boot) do sistema Tucandeira, viabilizando a automação de guias GNRE e integração PIX em tempo real.",
+            "Criei o Autenticador de Arquivos (Python/CustomTkinter) com hash MD5, garantindo a integridade legal de dados de auditoria trafegados em mídias físicas.",
+            "Modelei dashboards estratégicos no Tableau manipulando bases de dados massivas da Receita Estadual, fundamentais para a tomada de decisão fiscal.",
+          ],
         },
         {
           period: "Ago 2024 – Nov 2024",
-          role: "Desenvolvedor Front-end (Estagiário)",
+          role: "Desenvolvedor Full-Stack (Estágio)",
           system: "INSS — Web Academy",
-          focus: "Desenvolvimento do sistema SGCC-INSS para automação e catalogação de hardware com Angular e Python/Django",
-          projects: ["Sistema SGCC-INSS"],
+          focus: "Automação e catalogação do parque tecnológico utilizando Angular e Python (Django REST).",
+          projects: ["Sistema corporativo SGCC-INSS"],
+          achievements: [
+            "Estruturei o front-end responsivo (Angular/Bootstrap) e o conectei à API Django REST para mapear a obsolescência de hardware das Agências da Previdência.",
+            "Desenvolvi filtros e relatórios detalhados que transformaram o inventário de TI em uma ferramenta ágil para orientar as compras da gerência executiva.",
+          ],
         },
         {
-          period: "Ago 2024 – Nov 2024",
-          role: "Desenvolvedor Full-Stack",
+          period: "Ago 2024 – Dez 2024",
+          role: "Desenvolvedor Full-Stack & Scrum Master",
           system: "Web Academy / MOTO E",
-          focus: "Desenvolvimento de interface, modelagem de banco de dados e integração cross-layer em três projetos simultâneos",
-          projects: [
-            "G-TRIB: Interface e modelagem de dados para o sistema da SEFAZ",
-            "TaskNote Academy: SRE, QA e observabilidade",
-            "SGPS-WA: Automação de processos seletivos",
+          focus: "Liderança ágil e desenvolvimento ponta a ponta focado em arquitetura limpa, SRE e interfaces responsivas.",
+          projects: ["G-TRIB", "TaskNote Academy", "SGPS-WA"],
+          achievements: [
+            "Atuei como Scrum Master e desenvolvedor no G-TRIB (SEFAZ), modernizando processos tributários com Spring Boot e Angular.",
+            "Liderança técnica e mentoria no TaskNote Academy, focando na implementação de Poka-Yoke no front-end para blindar o banco de dados.",
+            "Desenvolvimento de 100% da interface e modelagem do banco de dados do SGPS-WA, lidando com requisitos diretos do Product Owner.",
           ],
         },
       ],
@@ -481,77 +551,116 @@ const DICT: Record<Lang, Dict> = {
       sub: "Full-Stack Developer & Data Analyst. Building everything from flawless UX interfaces to microservices and tax audit engines.",
       cta1: "View Projects", cta2: "Get in Touch", scroll: "scroll",
     },
-    labels: { confidential: "Internal / Confidential", viewOnGithub: "View on GitHub" },
+    labels: { confidential: "Internal / Confidential", viewOnGithub: "View on GitHub", back: "Back", backstoryTitle: "Behind the scenes", achievementsTitle: "Key Achievements", hoverHint: "hover me" },
     sections: { work: "Selected Work", about: "About", contact: "Contact" },
     projects: [
       {
         category: "Fiscal & APEX",
         title: "Tucandeira System",
-        description: "Oracle APEX application integrated with a Java (Spring Boot) middleware for goods control at a Fiscal Post. Highlight: proprietary PDF generator for GNRE issuance that eliminated dependency on an external API, reducing errors and increasing process control.",
+        description: "Oracle APEX application integrated with a Java (Spring Boot) middleware for goods control at a Fiscal Post. Real-time PIX integration and fiscal automation.",
+        backstory: "The biggest bottleneck was dependency on an unstable external API to generate GNRE guides. I built a proprietary PDF generator in the backend (Spring Boot) that mirrors the official document. Now the source API only provides the receipt (SOAP), while we retain full control over layout and guide generation — applying Poka-Yoke concepts to reduce operational errors at the fiscal post.",
         stack: ["Oracle APEX", "Spring Boot", "PIX"],
       },
       {
         category: "Data & BI",
         title: "Fiscal Intelligence Dashboards",
-        description: "Analytical dashboards and interactive maps in Tableau. One focuses on demographic and regional classification of cattle transit; the other on the Municipality Participation Index (IPM).",
+        description: "Analytical dashboards and interactive maps in Tableau. SQL extraction and processing of strategic fiscal data from the State Revenue authority.",
+        backstory: "I transformed raw databases into decision-making tools. I built a panel mapping cattle transit (classifying by sex, age, and regional routes) and a dashboard focused on the Municipality Participation Index (IPM), displaying revenue share distribution on dynamic maps for rapid visual auditing.",
         stack: ["Tableau", "Data Engineering", "SQL"],
       },
       {
         category: "Game Dev",
         title: "Tic Tac Boom",
-        description: "A chaotic 2D tic-tac-toe prototype in Godot 4.x, featuring 'Chaos Cards' that alter rules in real time and dynamic grids ranging from 3×3 to 5×5.",
+        description: "A chaotic 2D tic-tac-toe prototype in Godot 4.x, featuring 'Chaos Cards' that alter rules in real time and dynamic grids from 3x3 to 5x5.",
+        backstory: "The game design and programming challenge was building a flexible State Machine architecture to support in-game rule modifiers. The board actively reacts to played cards, demanding fully dynamic win-condition logic (match-checking) to handle expandable grids and mutable rules.",
         stack: ["Godot", "GDScript", "Game Design"],
       },
       {
         category: "Desktop & Python",
         title: "File Authenticator",
-        description: "Windows desktop application (Python + CustomTkinter) that automates file integrity verification via MD5 hash and generates formal PDF reports with ReportLab.",
+        description: "Native desktop application for Windows (Python + CustomTkinter) for verifying file integrity on physical media using MD5 hashing.",
+        backstory: "The audit team needed an inviolable way to prove that files on physical media had not been tampered with. I packaged a cryptographic fingerprint generator (MD5) into a user-friendly executable (.exe). The system scans files and generates a formal PDF report via ReportLab, used as verified evidence in legal proceedings.",
         stack: ["Python", "CustomTkinter", "ReportLab"],
       },
       {
         category: "Angular & Django",
         title: "SGCC-INSS",
-        description: "Cataloging system to identify hardware obsolescence in Social Security branches, developed during an internship at INSS.",
+        description: "Corporate system developed to catalog and monitor hardware technological obsolescence across Social Security branches.",
+        backstory: "Management had no visibility into obsolete hardware. I modeled the relational database and built the Angular interface to consume the Django API. The result was a fast inventory workflow for field technicians and strategic reports to justify budget requests and equipment replacements.",
         stack: ["Angular", "Django REST", "MySQL"],
       },
       {
         category: "Fiscal & Full-Stack",
         title: "G-TRIB",
-        description: "System developed for SEFAZ to track workflow progress and generate performance metrics for auditors, such as time spent per process and complexity level.",
+        description: "System for SEFAZ to monitor the progress of tax process flows and gather performance metrics for the auditing team.",
+        backstory: "Built in a real hands-on environment. I architected a backend capable of processing elapsed time per process and weighting its complexity level. On the front-end, the challenge was converting those raw metrics into intuitive visual interfaces, allowing managers to quickly identify bottlenecks in the fiscal audit production line.",
         stack: ["Spring Boot", "Angular", "Bootstrap"],
       },
       {
         category: "SRE & QA",
         title: "TaskNote Academy",
-        description: "Task manager with a strong focus on SRE and Quality Assurance. Implements automated E2E testing with Playwright (toil reduction), isolated infrastructure via Docker, real-time observability with Prometheus/Grafana, and resilience validation using Chaos Engineering tests.",
-        stack: ["Java 17", "Spring Boot", "Docker", "Playwright", "Grafana"],
+        description: "Task manager focused on preventive usability (Poka-Yoke) and technical team leadership.",
+        backstory: "I acted as technical lead and mentor, guiding the project scope to meet the evaluation panel's expectations. In the code, I focused on protecting the database by implementing Poka-Yoke concepts and strict validations directly on the front-end. This experience of guiding users to the 'happy path' and reducing visual error friction became the foundation for the interface architecture I later applied in the Tucandeira system.",
+        stack: ["JavaScript", "Tech Leadership", "UX/UI"],
       },
       {
         category: "Automation & HR",
         title: "SGPS-WA",
-        description: "System to automate candidate registrations and evaluations for Web Academy selection processes.",
-        stack: ["Angular", "Django", "MySQL"],
+        description: "Front-end development and data modeling for the Web Academy selection process management system.",
+        backstory: "After requirements gathering with the Product Owner, I modeled the database and built 100% of the screens in Angular. The biggest lesson from this project was about time management and systemic dependencies: due to parallel projects and team bottlenecks, the front-end and API integration was not completed on time. The project delivered strong interface and modeling artifacts, but taught me firsthand the technical cost of lacking continuous integration (CI).",
+        stack: ["Angular", "Bootstrap", "DB Modeling"],
       },
       {
         category: "Next.js & Design",
         title: "Personal Portfolio",
         description: "Interactive portfolio with a 16-bit retro aesthetic, dark/light mode toggle, integrated Dino mini-game as animated background, and PT/EN bilingual support.",
+        backstory: "This site. A 16-bit retro aesthetic built with Next.js and Tailwind v4, featuring a playable Dino mini-game rendered on canvas as the light-mode background, PT/EN i18n, and the 3D cards you're flipping right now.",
         stack: ["Next.js", "TypeScript", "Tailwind CSS"],
       },
     ],
-    highlights: [
-      { title: "SEFAZ / AC", text: "Fiscal and tax solutions for the State Treasury of Acre." },
-      { title: "MSc — UFAC", text: "Master's in Computer Science, in progress." },
-      { title: "Computer Vision", text: "Active academic research focus." },
+    education: [
+      {
+        tag: "Degree",
+        title: "Information Systems",
+        subtitle: "UFAC · Graduating Dec 2025",
+        backTitle: "Bachelor's",
+        backLines: [
+          "Federal University of Acre (UFAC)",
+          "Expected conclusion: December 2025",
+          "Focus on software & data engineering",
+        ],
+      },
+      {
+        tag: "Thesis",
+        title: "Generative AI in Education",
+        subtitle: "Undergraduate capstone research",
+        backTitle: "Capstone (TCC)",
+        backLines: [
+          "“Perception and Impact of Generative AI on Higher Education”",
+          "A study with Exact Sciences students at UFAC",
+          "Qualitative approach · Generative AI",
+        ],
+      },
+      {
+        tag: "Next steps",
+        title: "Computer Vision",
+        subtitle: "Master's (intended)",
+        backTitle: "Research",
+        backLines: [
+          "Aiming for an MSc in Computer Science",
+          "Research line: Computer Vision",
+          "Rigorous about evaluation & edge cases",
+        ],
+      },
     ],
     about: {
       p1a: "I'm a full-stack developer and data analyst who ships production software for the public sector — most recently engineering fiscal and tax solutions for ",
       sefaz: "SEFAZ/AC",
       p1b: ", the State Treasury of Acre. My work spans polished front-end interfaces, Java / Spring Boot microservices, and data pipelines that turn raw fiscal records into auditable insight.",
-      p2a: "In parallel, I'm pursuing a ",
-      ufac: "Master's in Computer Science at UFAC",
-      p2b: ", researching Computer Vision. The academic track keeps me close to first principles — rigorous about correctness, evaluation, and edge cases — while the market work keeps me shipping reliable software that real users and auditors depend on.",
-      portraitLabel: "[ pixel art portrait ]",
+      p2a: "On the academic side, I'm finishing a ",
+      ufac: "Bachelor's in Information Systems at UFAC",
+      p2b: " (December 2025), with a thesis on the impact of Generative AI on higher education — and aiming for a Master's in Computer Vision. The academic track keeps me close to first principles: rigorous about correctness, evaluation, and edge cases.",
+      eduSection: "Education",
     },
     skills: {
       section: "Skills",
@@ -562,27 +671,37 @@ const DICT: Record<Lang, Dict> = {
       entries: [
         {
           period: "May 2025 – Present",
-          role: "Junior Developer",
+          role: "Full-Stack Developer & Data Analyst",
           system: "VINT Global",
-          focus: "Data manipulation and analysis, SQL queries, Tableau dashboard development, and corporate web solutions with Oracle APEX",
+          focus: "API architecture, complex data manipulation, and high-impact corporate solutions for SEFAZ/AC.",
           projects: ["IPM & Cattle Transit Dashboards", "Tucandeira System", "File Authenticator"],
+          achievements: [
+            "Built the middleware API (Java/Spring Boot) for the Tucandeira system, enabling GNRE guide automation and real-time PIX integration.",
+            "Created the File Authenticator (Python/CustomTkinter) with MD5 hashing, ensuring the legal integrity of audit data on physical media.",
+            "Modeled strategic Tableau dashboards over massive State Revenue datasets, forming the foundation for fiscal decision-making.",
+          ],
         },
         {
           period: "Aug 2024 – Nov 2024",
-          role: "Front-end Developer (Intern)",
+          role: "Full-Stack Developer (Intern)",
           system: "INSS via Web Academy",
-          focus: "Developed the SGCC-INSS system for hardware automation and cataloging with Angular and Python/Django REST",
-          projects: ["SGCC-INSS System"],
+          focus: "Automation and cataloging of the technology infrastructure using Angular and Python (Django REST).",
+          projects: ["SGCC-INSS corporate system"],
+          achievements: [
+            "Built the responsive front-end (Angular/Bootstrap) and connected it to the Django REST API to map hardware obsolescence across Social Security branches.",
+            "Developed detailed filters and reports that turned the IT inventory into an agile tool for guiding executive procurement decisions.",
+          ],
         },
         {
-          period: "Aug 2024 – Nov 2024",
-          role: "Full-Stack Developer",
+          period: "Aug 2024 – Dec 2024",
+          role: "Full-Stack Developer & Scrum Master",
           system: "Web Academy / MOTO E",
-          focus: "Interface development, database modeling, and cross-layer integration across three simultaneous projects",
-          projects: [
-            "G-TRIB: Interface and data modeling for the SEFAZ system",
-            "TaskNote Academy: SRE, QA, and observability practices",
-            "SGPS-WA: Automation of selection processes",
+          focus: "Agile leadership and end-to-end development focused on clean architecture, SRE, and responsive interfaces.",
+          projects: ["G-TRIB", "TaskNote Academy", "SGPS-WA"],
+          achievements: [
+            "Acted as Scrum Master and developer on G-TRIB (SEFAZ), modernizing tax processes with Spring Boot and Angular.",
+            "Technical leadership and mentoring on TaskNote Academy, focusing on Poka-Yoke implementation on the front-end to protect the database.",
+            "Built 100% of the SGPS-WA interface and database modeling, handling requirements directly from the Product Owner.",
           ],
         },
       ],
@@ -639,12 +758,34 @@ function buildSocials(t: Dict) {
    SKILLS DATA
 ══════════════════════════════════════════════════════════════════════════ */
 
-const SKILL_GROUPS = [
-  { skills: [{name:"Python",abbr:"Py"},{name:"FastAPI",abbr:"FA"},{name:"Django",abbr:"Dj"},{name:"Java",abbr:"Jv"},{name:"Spring Boot",abbr:"SB"}] },
-  { skills: [{name:"Angular",abbr:"Ng"},{name:"TypeScript",abbr:"TS"},{name:"Oracle APEX",abbr:"AP"},{name:"Tailwind CSS",abbr:"TW"}] },
-  { skills: [{name:"Oracle SQL",abbr:"SQL"},{name:"PostgreSQL",abbr:"PG"},{name:"Tableau",abbr:"Tb"}] },
-  { skills: [{name:"Docker",abbr:"Do"},{name:"Git",abbr:"Gi"},{name:"Scrum",abbr:"Sc"}] },
-] as const;
+type SkillIcon = ComponentType<{ size?: number | string; className?: string }>;
+interface SkillEntry { name: string; abbr: string; Icon: SkillIcon; }
+
+const SKILL_GROUPS: Array<{ skills: SkillEntry[] }> = [
+  { skills: [
+    { name: "Python",       abbr: "Py",  Icon: SiPython      as SkillIcon },
+    { name: "FastAPI",      abbr: "FA",  Icon: SiFastapi     as SkillIcon },
+    { name: "Django",       abbr: "Dj",  Icon: SiDjango      as SkillIcon },
+    { name: "Java",         abbr: "Jv",  Icon: FaJava        as SkillIcon },
+    { name: "Spring Boot",  abbr: "SB",  Icon: SiSpringboot  as SkillIcon },
+  ]},
+  { skills: [
+    { name: "Angular",      abbr: "Ng",  Icon: SiAngular     as SkillIcon },
+    { name: "TypeScript",   abbr: "TS",  Icon: SiTypescript  as SkillIcon },
+    { name: "Oracle APEX",  abbr: "AP",  Icon: Database      as SkillIcon },
+    { name: "Tailwind CSS", abbr: "TW",  Icon: SiTailwindcss as SkillIcon },
+  ]},
+  { skills: [
+    { name: "Oracle SQL",   abbr: "SQL", Icon: Database      as SkillIcon },
+    { name: "PostgreSQL",   abbr: "PG",  Icon: SiPostgresql  as SkillIcon },
+    { name: "Tableau",      abbr: "Tb",  Icon: BarChart3     as SkillIcon },
+  ]},
+  { skills: [
+    { name: "Docker",       abbr: "Do",  Icon: SiDocker      as SkillIcon },
+    { name: "Git",          abbr: "Gi",  Icon: SiGit         as SkillIcon },
+    { name: "Scrum",        abbr: "Sc",  Icon: Users         as SkillIcon },
+  ]},
+];
 
 const SKILL_ACCENT       = ["text-accent","text-accent-gold","text-accent-crimson","text-accent-emerald"] as const;
 const SKILL_HEADER_ACCENT = ["text-accent","text-accent-gold","text-accent-crimson","text-accent-emerald"] as const;
@@ -662,6 +803,75 @@ function SectionHeading({ index, title }: { index: string; title: string }) {
     </div>
   );
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FLIP CARD  —  click-controlled (`flipped`) or hover-controlled (`hover`)
+══════════════════════════════════════════════════════════════════════════ */
+
+interface FlipCardProps {
+  front: ReactNode;
+  back: ReactNode;
+  flipped?: boolean;
+  hover?: boolean;
+  onClick?: () => void;
+  className?: string;
+  faceClassName?: string;
+  ariaLabel?: string;
+}
+
+function FlipCard({ front, back, flipped, hover, onClick, className, faceClassName, ariaLabel }: FlipCardProps) {
+  const interactive = !hover && !!onClick;
+
+  // Inner rotation class — hover cards use CSS group-hover, click cards use
+  // the controlled `flipped` prop. The two branches never overlap.
+  const innerRotation = hover
+    ? "group-hover:[transform:rotateY(180deg)]"
+    : flipped
+    ? "[transform:rotateY(180deg)]"
+    : "";
+
+  return (
+    /*
+      Outer layer — perspective + hover bounce.
+      `relative` makes it the containing block for the absolute inner layer,
+      so `inset-0` on the inner always fills this element regardless of
+      whether the height came from an explicit `h-[...]` or `min-h-[...]`.
+    */
+    <div
+      className={[
+        "card-root relative group [perspective:1200px]",
+        "transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-black/20",
+        interactive ? "cursor-pointer" : "",
+        className ?? "",
+      ].join(" ")}
+      onClick={onClick}
+      onKeyDown={
+        interactive
+          ? (e: ReactKeyboardEvent<HTMLDivElement>) => {
+              if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); }
+            }
+          : undefined
+      }
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-pressed={interactive ? !!flipped : undefined}
+      aria-label={ariaLabel}
+    >
+      {/* Inner layer — 3D rotation. absolute inset-0 fills the outer layer. */}
+      <div
+        className={[
+          "flip-inner absolute inset-0 [transform-style:preserve-3d]",
+          "transition-transform duration-700 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]",
+          innerRotation,
+        ].join(" ")}
+      >
+        <div className={`flip-face ${faceClassName ?? ""}`}>{front}</div>
+        <div className={`flip-face flip-back ${faceClassName ?? ""}`}>{back}</div>
+      </div>
+    </div>
+  );
+}
+
 
 /* ══════════════════════════════════════════════════════════════════════════
    TYPING BRAND
@@ -696,10 +906,13 @@ function TypingBrand({ lang }: { lang: Lang }) {
         const t = setTimeout(() => setDisplayed(prev => prev.slice(0, -1)), 40);
         return () => clearTimeout(t);
       }
-      setPhraseIdx(i => (i + 1) % BRAND_PHRASES[lang].length);
-      setPhase("typing");
+      const t = setTimeout(() => {
+        setPhraseIdx(i => (i + 1) % BRAND_PHRASES[lang].length);
+        setPhase("typing");
+      }, 400);
+      return () => clearTimeout(t);
     }
-  }, [displayed, phase, phraseIdx]);
+  }, [displayed, phase, phraseIdx, lang]);
 
   return (
     <span className="font-pixel text-[11px] text-foreground">
@@ -812,21 +1025,32 @@ interface ProjectCardProps {
   meta: ProjectMeta;
   showAnt?: boolean;
   labels: Dict["labels"];
+  flipped: boolean;
+  onToggle: () => void;
 }
 
-function ProjectCard({ data, meta, showAnt, labels }: ProjectCardProps) {
+function ProjectCard({ data, meta, showAnt, labels, flipped, onToggle }: ProjectCardProps) {
   const { Icon } = meta;
 
-  return (
-    <div className="surface-card group relative flex h-full flex-col overflow-hidden p-6">
-      {/* Icon + confidentiality indicator */}
+  const flipBtn = (icon: ReactNode, label: string) => (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={label}
+      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 border-line text-faint transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-accent/60 hover:text-accent"
+    >
+      {icon}
+    </button>
+  );
+
+  /* ── FRONT ─────────────────────────────────────────────────────────── */
+  const front = (
+    <div className="surface-face relative flex h-full flex-col overflow-hidden rounded-2xl p-6">
       <div className="mb-6 flex items-start justify-between">
         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-line bg-chip text-accent transition-colors duration-500">
           <Icon className="h-5 w-5" />
         </span>
-        {!meta.isConfidential && (
-          <ArrowUpRight className="h-5 w-5 text-faint transition-colors duration-300 ease-out group-hover:text-foreground" />
-        )}
+        {flipBtn(<RotateCw className="h-4 w-4" />, labels.backstoryTitle)}
       </div>
 
       <p className="mb-2 font-pixel text-[9px] uppercase text-accent-gold">{data.category}</p>
@@ -841,7 +1065,6 @@ function ProjectCard({ data, meta, showAnt, labels }: ProjectCardProps) {
         ))}
       </ul>
 
-      {/* Confidential badge or GitHub link */}
       {meta.isConfidential ? (
         <div className="mt-5 flex items-center gap-2 text-faint">
           <Lock className="h-3.5 w-3.5 shrink-0" />
@@ -852,15 +1075,13 @@ function ProjectCard({ data, meta, showAnt, labels }: ProjectCardProps) {
           href={meta.githubUrl ?? PROFILE.github}
           target={meta.githubUrl !== "#" ? "_blank" : undefined}
           rel={meta.githubUrl !== "#" ? "noopener noreferrer" : undefined}
-          className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-accent transition-all duration-300 ease-out hover:gap-3 hover:text-foreground"
-          onClick={e => e.stopPropagation()}
+          className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-medium text-accent transition-all duration-300 ease-out hover:gap-3 hover:text-foreground"
         >
           <GithubIcon className="h-4 w-4 shrink-0" />
           {labels.viewOnGithub}
         </a>
       )}
 
-      {/* Ant — first card (Tucandeira) only */}
       {showAnt && (
         <>
           <div className="pointer-events-none absolute bottom-3 left-0 w-full overflow-hidden" style={{ height: 28 }} aria-hidden="true">
@@ -873,6 +1094,32 @@ function ProjectCard({ data, meta, showAnt, labels }: ProjectCardProps) {
       )}
     </div>
   );
+
+  /* ── BACK: "behind the scenes" ─────────────────────────────────────── */
+  const back = (
+    <div className="surface-face flex h-full flex-col overflow-hidden rounded-2xl p-6">
+      <div className="mb-4 flex items-start justify-between">
+        <span className="inline-flex items-center gap-2 text-accent">
+          <Sparkles className="h-4 w-4 shrink-0" />
+          <span className="font-pixel text-[9px] uppercase leading-relaxed">{labels.backstoryTitle}</span>
+        </span>
+        {flipBtn(<Undo2 className="h-4 w-4" />, labels.back)}
+      </div>
+
+      <h3 className="text-base font-semibold leading-snug text-foreground">{data.title}</h3>
+      <p className="mt-3 min-h-0 flex-1 overflow-y-auto pr-1 text-sm leading-relaxed text-foreground/85">{data.backstory}</p>
+
+      <ul className="mt-4 flex flex-wrap gap-2">
+        {data.stack.map((item, i) => (
+          <li key={item} className={`rounded-md border px-2.5 py-1 font-mono text-[11px] ${TAG_COLORS[i % TAG_COLORS.length]}`}>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  return <FlipCard flipped={flipped} className="min-h-[470px]" front={front} back={back} />;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -880,6 +1127,9 @@ function ProjectCard({ data, meta, showAnt, labels }: ProjectCardProps) {
 ══════════════════════════════════════════════════════════════════════════ */
 
 function Projects({ t }: { t: Dict }) {
+  const [flipped, setFlipped] = useState<Record<number, boolean>>({});
+  const toggle = (i: number) => setFlipped(prev => ({ ...prev, [i]: !prev[i] }));
+
   return (
     <section id="projects" className="py-24">
       <SectionHeading index="01" title={t.sections.work} />
@@ -891,6 +1141,8 @@ function Projects({ t }: { t: Dict }) {
             meta={PROJECT_META[i] ?? PROJECT_META[0]}
             showAnt={i === 0}
             labels={t.labels}
+            flipped={!!flipped[i]}
+            onToggle={() => toggle(i)}
           />
         ))}
       </div>
@@ -902,7 +1154,36 @@ function Projects({ t }: { t: Dict }) {
    ABOUT SECTION
 ══════════════════════════════════════════════════════════════════════════ */
 
-const HIGHLIGHT_ICONS = [Building2, GraduationCap, ScanEye] as const;
+const EDUCATION_ICONS = [GraduationCap, BookOpen, ScanEye] as const;
+
+function EducationFlipCard({ card, Icon }: { card: EducationCard; Icon: ComponentType<{ className?: string }> }) {
+  const front = (
+    <div className="surface-face flex h-full flex-col rounded-2xl p-4">
+      <div className="flex items-center justify-between">
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-chip text-accent">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="font-pixel text-[8px] uppercase text-accent-gold">{card.tag}</span>
+      </div>
+      <p className="mt-3 text-sm font-semibold leading-snug text-foreground">{card.title}</p>
+      <p className="mt-1 text-xs leading-snug text-muted">{card.subtitle}</p>
+    </div>
+  );
+  const back = (
+    <div className="surface-face flex h-full flex-col overflow-hidden rounded-2xl p-4">
+      <p className="font-pixel text-[8px] uppercase leading-relaxed text-accent">{card.backTitle}</p>
+      <ul className="mt-2 space-y-1.5 overflow-y-auto">
+        {card.backLines.map((line, i) => (
+          <li key={i} className="flex gap-1.5 text-[11px] leading-snug text-foreground/85">
+            <span className="shrink-0 text-accent">›</span>
+            <span>{line}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+  return <FlipCard hover className="min-h-[150px]" front={front} back={back} />;
+}
 
 function About({ t }: { t: Dict }) {
   const ab = t.about;
@@ -921,39 +1202,46 @@ function About({ t }: { t: Dict }) {
             </p>
           </div>
 
-          <ul className="grid gap-3 sm:grid-cols-3">
-            {t.highlights.map(({ title, text }, i) => {
-              const Icon = HIGHLIGHT_ICONS[i];
-              return (
-                <li key={title} className="surface-card flex gap-3 p-4">
-                  <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-chip text-accent">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="font-pixel text-[9px] leading-relaxed text-accent-gold">{title}</p>
-                    <p className="mt-1 text-xs leading-snug text-muted">{text}</p>
-                  </div>
+          <div>
+            <p className="mb-4 font-pixel text-[9px] uppercase tracking-widest text-accent">{ab.eduSection}</p>
+            <ul className="grid gap-3 sm:grid-cols-3">
+              {t.education.map((card, i) => (
+                <li key={card.title}>
+                  <EducationFlipCard card={card} Icon={EDUCATION_ICONS[i]} />
                 </li>
-              );
-            })}
-          </ul>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {PORTRAIT_SRC ? (
-          <Image
-            src={PORTRAIT_SRC}
-            alt={`${PROFILE.fullName} — pixel art portrait`}
-            width={180} height={200} sizes="180px"
-            style={{ imageRendering: "pixelated" }}
-            className="surface-card object-cover"
-          />
-        ) : (
-          <div className="surface-card flex flex-col items-center justify-center" style={{ width: 180, height: 200 }}
-            aria-label={ab.portraitLabel} role="img">
-            <div className="font-pixel text-3xl text-accent/40">?</div>
-            <p className="mt-4 px-3 text-center font-pixel text-[8px] leading-relaxed text-accent/60">{ab.portraitLabel}</p>
-          </div>
-        )}
+        {/* Avatar — hover to flip from pixel art to the real photo */}
+        <FlipCard
+          hover
+          className="h-[200px] w-[180px] shrink-0"
+          front={
+            <div className="surface-face relative h-full w-full overflow-hidden rounded-2xl">
+              <Image
+                src={PORTRAIT_SRC}
+                alt={`${PROFILE.fullName} — pixel art portrait`}
+                fill sizes="180px"
+                style={{ imageRendering: "pixelated", objectFit: "cover" }}
+              />
+              <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-md border border-line bg-background/80 px-2 py-1 font-pixel text-[7px] uppercase text-accent backdrop-blur">
+                {t.labels.hoverHint}
+              </span>
+            </div>
+          }
+          back={
+            <div className="surface-face relative h-full w-full overflow-hidden rounded-2xl">
+              <Image
+                src={PORTRAIT_REAL_SRC}
+                alt={`${PROFILE.fullName} — photo`}
+                fill sizes="180px"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+          }
+        />
       </div>
     </section>
   );
@@ -975,10 +1263,23 @@ function Skills({ t }: { t: Dict }) {
             </p>
             <div className="flex flex-wrap gap-3">
               {group.skills.map(skill => (
-                <div key={skill.name} className="skill-chip flex flex-col items-center gap-1.5 px-4 py-3 min-w-[72px]">
-                  <span className={`font-pixel text-[9px] ${SKILL_ACCENT[gi]}`}>{skill.abbr}</span>
-                  <span className="text-xs text-muted">{skill.name}</span>
-                </div>
+                <FlipCard
+                  key={skill.name}
+                  hover
+                  className="h-[88px] w-[96px]"
+                  front={
+                    <div className="surface-face flex h-full w-full flex-col items-center justify-center gap-1.5 rounded-xl px-2">
+                      <span className={`font-pixel text-[10px] ${SKILL_ACCENT[gi]}`}>{skill.abbr}</span>
+                      <span className="text-center text-[10px] leading-tight text-muted">{skill.name}</span>
+                    </div>
+                  }
+                  back={
+                    <div className={`surface-face flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl px-2 ${SKILL_ACCENT[gi]}`}>
+                      <skill.Icon size={28} aria-hidden="true" />
+                      <span className="text-center text-[9px] leading-tight text-muted">{skill.name}</span>
+                    </div>
+                  }
+                />
               ))}
             </div>
           </div>
@@ -993,17 +1294,19 @@ function Skills({ t }: { t: Dict }) {
 ══════════════════════════════════════════════════════════════════════════ */
 
 function Experience({ t }: { t: Dict }) {
+  const [flipped, setFlipped] = useState<Record<number, boolean>>({});
+  const toggle = (i: number) => setFlipped(prev => ({ ...prev, [i]: !prev[i] }));
+
   return (
     <section id="experience" className="py-24">
       <SectionHeading index="04" title={t.experience.section} />
       <div className="relative pl-8">
         <div className="timeline-track" />
         <div className="space-y-8">
-          {t.experience.entries.map((entry, i) => (
-            <div key={i} className="relative">
-              <div className="absolute -left-8 top-5 h-3.5 w-3.5 rounded-sm border-2 border-accent bg-background transition-colors duration-500" />
-              <div className="surface-card p-6">
-                <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+          {t.experience.entries.map((entry, i) => {
+            const front = (
+              <div className="surface-face flex h-full flex-col rounded-2xl p-6">
+                <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="font-pixel text-[9px] text-accent-gold">{entry.system}</p>
                     <h3 className="mt-1.5 text-base font-semibold text-foreground">{entry.role}</h3>
@@ -1012,16 +1315,52 @@ function Experience({ t }: { t: Dict }) {
                 </div>
                 <ul className="mb-4 space-y-1.5">
                   {entry.projects.map(proj => (
-                    <li key={proj} className="flex items-center gap-2 text-sm text-muted">
-                      <span className="font-pixel text-[8px] text-accent leading-none">›</span>
-                      {proj}
+                    <li key={proj} className="flex items-start gap-2 text-sm text-muted">
+                      <span className="mt-1 font-pixel text-[8px] leading-none text-accent">›</span>
+                      <span>{proj}</span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs text-faint italic">{entry.focus}</p>
+                <p className="text-xs italic text-faint">{entry.focus}</p>
+                <span className="mt-auto flex items-center gap-1.5 self-end pt-4 text-faint">
+                  <RotateCw className="h-3.5 w-3.5" />
+                  <span className="font-pixel text-[7px] uppercase leading-relaxed">{t.labels.achievementsTitle}</span>
+                </span>
               </div>
-            </div>
-          ))}
+            );
+            const back = (
+              <div className="surface-face flex h-full flex-col rounded-2xl p-6">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-2 text-accent-gold">
+                    <Trophy className="h-4 w-4 shrink-0" />
+                    <span className="font-pixel text-[9px] uppercase leading-relaxed">{t.labels.achievementsTitle}</span>
+                  </span>
+                  <span className="shrink-0 font-pixel text-[8px] text-faint">{entry.system}</span>
+                </div>
+                <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto">
+                  {entry.achievements.map((a, ai) => (
+                    <li key={ai} className="flex gap-2 text-sm leading-snug text-foreground/85">
+                      <span className="mt-0.5 shrink-0 text-accent-gold">★</span>
+                      <span>{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+            return (
+              <div key={i} className="relative">
+                <div className="absolute -left-8 top-5 z-10 h-3.5 w-3.5 rounded-sm border-2 border-accent bg-background transition-colors duration-500" />
+                <FlipCard
+                  flipped={!!flipped[i]}
+                  onClick={() => toggle(i)}
+                  ariaLabel={`${entry.system} — ${entry.role}`}
+                  className="min-h-[300px]"
+                  front={front}
+                  back={back}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
