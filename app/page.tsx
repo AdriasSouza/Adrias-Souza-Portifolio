@@ -359,7 +359,7 @@ interface EducationCard {
 interface Dict {
   nav: { projects: string; about: string; skills: string; experience: string; contact: string };
   hero: { greeting: string; headline: string; headlineAccent: string; sub: string; cta1: string; cta2: string; scroll: string };
-  labels: { confidential: string; viewOnGithub: string; back: string; backstoryTitle: string; achievementsTitle: string; hoverHint: string };
+  labels: { confidential: string; viewOnGithub: string; play?: string; back: string; backstoryTitle: string; achievementsTitle: string; hoverHint: string };
   sections: { work: string; about: string; contact: string };
   projects: ProjectText[];
   education: [EducationCard, EducationCard, EducationCard];
@@ -379,7 +379,7 @@ const DICT: Record<Lang, Dict> = {
       sub: "Desenvolvedor Full-Stack & Analista de Dados. Construindo desde interfaces com UX impecável até microsserviços e motores de auditoria fiscal.",
       cta1: "Ver Projetos", cta2: "Entrar em Contato", scroll: "role",
     },
-    labels: { confidential: "Interno / Confidencial", viewOnGithub: "Ver no GitHub", back: "Voltar", backstoryTitle: "Nos bastidores", achievementsTitle: "Conquistas & Momentos-chave", hoverHint: "passe o mouse" },
+    labels: { confidential: "Interno / Confidencial", viewOnGithub: "Ver no GitHub", play: "Jogar", back: "Voltar", backstoryTitle: "Nos bastidores", achievementsTitle: "Conquistas & Momentos-chave", hoverHint: "passe o mouse" },
     sections: { work: "Projetos", about: "Sobre", contact: "Contato" },
     projects: [
       {
@@ -551,7 +551,7 @@ const DICT: Record<Lang, Dict> = {
       sub: "Full-Stack Developer & Data Analyst. Building everything from flawless UX interfaces to microservices and tax audit engines.",
       cta1: "View Projects", cta2: "Get in Touch", scroll: "scroll",
     },
-    labels: { confidential: "Internal / Confidential", viewOnGithub: "View on GitHub", back: "Back", backstoryTitle: "Behind the scenes", achievementsTitle: "Key Achievements", hoverHint: "hover me" },
+    labels: { confidential: "Internal / Confidential", viewOnGithub: "View on GitHub", play: "Play", back: "Back", backstoryTitle: "Behind the scenes", achievementsTitle: "Key Achievements", hoverHint: "hover me" },
     sections: { work: "Selected Work", about: "About", contact: "Contact" },
     projects: [
       {
@@ -736,7 +736,7 @@ interface ProjectMeta {
 const PROJECT_META: ProjectMeta[] = [
   { isConfidential: true,  Icon: FileText    },  // Tucandeira
   { isConfidential: true,  Icon: BarChart3   },  // Fiscal Dashboards
-  { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/Tic-Tac-Boom",                    Icon: Gamepad2   },
+  { isConfidential: false, githubUrl: "https://tic-tac-boom-chi.vercel.app",                    Icon: Gamepad2   },
   { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/autenticador_arquivos",            Icon: ShieldCheck },
   { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/SGCC-INSS-Estagio",               Icon: Monitor    },
   { isConfidential: true,  Icon: Boxes       },  // G-TRIB SEFAZ
@@ -1077,8 +1077,12 @@ function ProjectCard({ data, meta, showAnt, labels, flipped, onToggle }: Project
           rel={meta.githubUrl !== "#" ? "noopener noreferrer" : undefined}
           className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-medium text-accent transition-all duration-300 ease-out hover:gap-3 hover:text-foreground"
         >
-          <GithubIcon className="h-4 w-4 shrink-0" />
-          {labels.viewOnGithub}
+          {data.title === "Tic Tac Boom" ? (
+            <Gamepad2 className="h-4 w-4 shrink-0" />
+          ) : (
+            <GithubIcon className="h-4 w-4 shrink-0" />
+          )}
+          {data.title === "Tic Tac Boom" ? labels.play : labels.viewOnGithub}
         </a>
       )}
 
