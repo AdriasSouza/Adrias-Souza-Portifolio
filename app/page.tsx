@@ -31,6 +31,7 @@ import {
   SiPython, SiFastapi, SiDjango, SiSpringboot,
   SiAngular, SiTypescript, SiTailwindcss,
   SiPostgresql, SiDocker, SiGit,
+  SiReact, SiNextdotjs,
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
 
@@ -390,6 +391,13 @@ const DICT: Record<Lang, Dict> = {
         stack: ["Oracle APEX", "Spring Boot", "PIX"],
       },
       {
+        category: "Pesquisa & IA",
+        title: "RefAgent-Python",
+        description: "Implementação open source em Python do RefAgent, framework multiagente baseado em LLMs para refatoração automática de código, com agentes de planejamento, geração, compilação e testes.",
+        backstory: "O framework divide a refatoração entre agentes especializados: um planejador escolhe os métodos com base em métricas de código, um gerador produz a refatoração via LLM, e agentes de compilação (Maven) e de testes validam o resultado, devolvendo as falhas ao LLM para uma nova tentativa. Suporta OpenAI, DeepSeek, Gemini e modelos locais via Ollama, e é avaliado no benchmark RefactorBench. Minha atuação: repliquei a arquitetura do RefAgent, selecionei os agentes, fiz a implantação no servidor de pesquisa do mestrado via SSH e conduzi a execução e a avaliação dos testes.",
+        stack: ["Python", "LLMs", "Multiagente", "Linux/SSH"],
+      },
+      {
         category: "Dados & BI",
         title: "Dashboards Inteligência Fiscal",
         description: "Dashboards analíticos e mapas interativos em Tableau. Extração (SQL) e tratamento de dados fiscais estratégicos da Receita Estadual.",
@@ -406,9 +414,9 @@ const DICT: Record<Lang, Dict> = {
       {
         category: "Desktop & Python",
         title: "Autenticador de Arquivos",
-        description: "Aplicação desktop nativa para Windows (Python + CustomTkinter) para verificação de integridade de arquivos em mídias físicas com hash MD5.",
-        backstory: "A equipe de auditoria precisava de uma forma inviolável de provar que arquivos de mídias físicas não foram adulterados. Empacotei um gerador de 'impressão digital' criptográfica (MD5) em um executável (.exe) de interface amigável. O sistema varre os arquivos e gera um laudo formal em PDF via ReportLab, utilizado como prova íntegra nos processos.",
-        stack: ["Python", "CustomTkinter", "ReportLab"],
+        description: "Aplicação desktop para Windows (Python + CustomTkinter) que verifica a integridade de arquivos em mídias físicas por hash criptográfico, integrada a uma API em FastAPI.",
+        backstory: "A equipe de auditoria precisava comprovar que arquivos entregues em mídias físicas não foram alterados entre o envio e o recebimento. Desenvolvi um executável (.exe) com interface amigável que calcula o hash de cada arquivo e gera um laudo formal em PDF via ReportLab, anexado aos processos. O cliente se comunica com uma API REST em FastAPI, projetada para rodar como servidor, que registra os hashes gerados para permitir a validação posterior.",
+        stack: ["Python", "CustomTkinter", "FastAPI", "ReportLab"],
       },
       {
         category: "Angular & Django",
@@ -439,6 +447,13 @@ const DICT: Record<Lang, Dict> = {
         stack: ["Angular", "Bootstrap", "DB Modeling"],
       },
       {
+        category: "Mobile & Java",
+        title: "Rogue Ducks",
+        description: "Jogo em Java nativo para Android desenvolvido para a disciplina de Desenvolvimento Mobile da Pós-Graduação em Inteligência Artificial para Engenharia de Software.",
+        backstory: "O maior desafio foi construir a aplicação em Java nativo para Android. O jogo é um survival de ondas: patos pixelados atravessam a tela da esquerda para a direita e o jogador precisa clicar para abatê-los. Criei uma variedade de tipos de pato — alguns ficam invisíveis, outros aguentam mais tiros, e dois são mais rápidos que o restante. Ao final de cada onda, o jogador escolhe uma melhoria: aumento da área de tiro, aumento de dano ou a habilidade de ricochetear o dano para um pato próximo. O jogo também conta com efeitos sonoros e trilha sonora, reaproveitados de outras fontes.",
+        stack: ["Java", "Android", "Game Dev"],
+      },
+      {
         category: "Next.js & Design",
         title: "Portfólio Pessoal",
         description: "Portfólio interativo com estética retrô 16-bit, toggle de modo escuro/claro, mini-game Dino integrado como background animado e suporte bilíngue PT/EN.",
@@ -450,11 +465,11 @@ const DICT: Record<Lang, Dict> = {
       {
         tag: "Graduação",
         title: "Sistemas de Informação",
-        subtitle: "UFAC · Conclusão Dez. 2025",
+        subtitle: "UFAC · Concluído em Dez. 2025",
         backTitle: "Bacharelado",
         backLines: [
           "Universidade Federal do Acre (UFAC)",
-          "Conclusão prevista: Dezembro de 2025",
+          "Concluído: Dezembro de 2025",
           "Foco em engenharia de software e dados",
         ],
       },
@@ -470,14 +485,14 @@ const DICT: Record<Lang, Dict> = {
         ],
       },
       {
-        tag: "Próx. passos",
-        title: "Visão Computacional",
-        subtitle: "Mestrado (pretendido)",
-        backTitle: "Pesquisa",
+        tag: "Mestrado",
+        title: "Reparo de Flaky Tests com LLMs",
+        subtitle: "PPGCC/UFAC · Em andamento",
+        backTitle: "Mestrado",
         backLines: [
-          "Mirando um Mestrado em Ciência da Computação",
-          "Linha de pesquisa: Visão Computacional",
-          "Rigor com avaliação e casos de borda",
+          "Mestrado em Ciência da Computação (UFAC)",
+          "Linha: Engenharia de Software",
+          "Framework multiagente de LLMs para diagnóstico e reparo de testes intermitentes",
         ],
       },
     ],
@@ -485,9 +500,9 @@ const DICT: Record<Lang, Dict> = {
       p1a: "Sou desenvolvedor full-stack e analista de dados que entrega software de produção para o setor público — mais recentemente, engenhando soluções fiscais e tributárias para a ",
       sefaz: "SEFAZ/AC",
       p1b: ", a Secretaria de Estado da Fazenda do Acre. Meu trabalho abrange interfaces front-end refinadas, microsserviços Java / Spring Boot e pipelines de dados que transformam registros fiscais brutos em insights auditáveis.",
-      p2a: "No meio acadêmico, estou concluindo o ",
+      p2a: "No meio acadêmico, concluí o ",
       ufac: "Bacharelado em Sistemas de Informação na UFAC",
-      p2b: " (Dezembro de 2025), com TCC sobre o impacto da IA Generativa no ensino superior — e mirando um mestrado em Visão Computacional. A trajetória acadêmica me mantém próximo dos primeiros princípios: rigoroso com correção, avaliação e casos de borda.",
+      p2b: " (2025), com TCC sobre o impacto da IA Generativa no ensino superior, e hoje curso o Mestrado em Ciência da Computação na UFAC, pesquisando o uso de sistemas multiagente baseados em LLMs para diagnosticar e reparar testes intermitentes (flaky tests). A trajetória acadêmica me mantém próximo dos primeiros princípios: rigoroso com correção, avaliação e casos de borda.",
       eduSection: "Formação",
     },
     skills: {
@@ -505,7 +520,7 @@ const DICT: Record<Lang, Dict> = {
           projects: ["Dashboards IPM e Trânsito de Gado", "Sistema Tucandeira", "Autenticador de Arquivos"],
           achievements: [
             "Desenvolvi a API middleware (Java/Spring Boot) do sistema Tucandeira, viabilizando a automação de guias GNRE e integração PIX em tempo real.",
-            "Criei o Autenticador de Arquivos (Python/CustomTkinter) com hash MD5, garantindo a integridade legal de dados de auditoria trafegados em mídias físicas.",
+            "Criei o Autenticador de Arquivos (Python/CustomTkinter) com verificação por hash criptográfico e API em FastAPI, garantindo a integridade legal de dados de auditoria trafegados em mídias físicas.",
             "Modelei dashboards estratégicos no Tableau manipulando bases de dados massivas da Receita Estadual, fundamentais para a tomada de decisão fiscal.",
           ],
         },
@@ -562,6 +577,13 @@ const DICT: Record<Lang, Dict> = {
         stack: ["Oracle APEX", "Spring Boot", "PIX"],
       },
       {
+        category: "Research & AI",
+        title: "RefAgent-Python",
+        description: "Open source Python implementation of RefAgent, an LLM-based multi-agent framework for automatic code refactoring, with planning, generation, compilation, and testing agents.",
+        backstory: "The framework splits refactoring across specialized agents: a planner picks methods based on code metrics, a generator produces the refactoring via LLM, and compilation (Maven) and testing agents validate the result, feeding failures back to the LLM for another attempt. It supports OpenAI, DeepSeek, Gemini, and local models via Ollama, and is evaluated on the RefactorBench benchmark. My role: replicated the RefAgent architecture, selected the agents, deployed them on the master's research server via SSH, and ran and evaluated the experiments.",
+        stack: ["Python", "LLMs", "Multi-Agent", "Linux/SSH"],
+      },
+      {
         category: "Data & BI",
         title: "Fiscal Intelligence Dashboards",
         description: "Analytical dashboards and interactive maps in Tableau. SQL extraction and processing of strategic fiscal data from the State Revenue authority.",
@@ -578,9 +600,9 @@ const DICT: Record<Lang, Dict> = {
       {
         category: "Desktop & Python",
         title: "File Authenticator",
-        description: "Native desktop application for Windows (Python + CustomTkinter) for verifying file integrity on physical media using MD5 hashing.",
-        backstory: "The audit team needed an inviolable way to prove that files on physical media had not been tampered with. I packaged a cryptographic fingerprint generator (MD5) into a user-friendly executable (.exe). The system scans files and generates a formal PDF report via ReportLab, used as verified evidence in legal proceedings.",
-        stack: ["Python", "CustomTkinter", "ReportLab"],
+        description: "Desktop application for Windows (Python + CustomTkinter) that verifies file integrity on physical media via cryptographic hash, integrated with a FastAPI API.",
+        backstory: "The audit team needed to prove that files delivered on physical media had not been altered between sending and receiving. I built a user-friendly executable (.exe) that computes each file's hash and generates a formal PDF report via ReportLab, attached to the case files. The client communicates with a FastAPI REST API, designed to run as a server, which logs the generated hashes to allow later validation.",
+        stack: ["Python", "CustomTkinter", "FastAPI", "ReportLab"],
       },
       {
         category: "Angular & Django",
@@ -611,6 +633,13 @@ const DICT: Record<Lang, Dict> = {
         stack: ["Angular", "Bootstrap", "DB Modeling"],
       },
       {
+        category: "Mobile & Java",
+        title: "Rogue Ducks",
+        description: "Native Java game for Android built for the Mobile Development course of the Postgraduate program in Artificial Intelligence for Software Engineering.",
+        backstory: "The biggest challenge was building the application in native Java for Android. The game is a wave-survival experience: pixelated ducks cross the screen from left to right, and the player must click to take them down. I built a variety of duck types — some turn invisible, others take more hits, and two move faster than the rest. At the end of each wave, the player picks an upgrade: a larger shot area, increased damage, or the ability to ricochet damage to a nearby duck. The game also features sound effects and music, reused from other sources.",
+        stack: ["Java", "Android", "Game Dev"],
+      },
+      {
         category: "Next.js & Design",
         title: "Personal Portfolio",
         description: "Interactive portfolio with a 16-bit retro aesthetic, dark/light mode toggle, integrated Dino mini-game as animated background, and PT/EN bilingual support.",
@@ -622,11 +651,11 @@ const DICT: Record<Lang, Dict> = {
       {
         tag: "Degree",
         title: "Information Systems",
-        subtitle: "UFAC · Graduating Dec 2025",
+        subtitle: "UFAC · Completed Dec 2025",
         backTitle: "Bachelor's",
         backLines: [
           "Federal University of Acre (UFAC)",
-          "Expected conclusion: December 2025",
+          "Completed: December 2025",
           "Focus on software & data engineering",
         ],
       },
@@ -642,14 +671,14 @@ const DICT: Record<Lang, Dict> = {
         ],
       },
       {
-        tag: "Next steps",
-        title: "Computer Vision",
-        subtitle: "Master's (intended)",
-        backTitle: "Research",
+        tag: "Master's",
+        title: "Flaky Test Repair with LLMs",
+        subtitle: "PPGCC/UFAC · In progress",
+        backTitle: "Master's",
         backLines: [
-          "Aiming for an MSc in Computer Science",
-          "Research line: Computer Vision",
-          "Rigorous about evaluation & edge cases",
+          "MSc in Computer Science (UFAC)",
+          "Research area: Software Engineering",
+          "LLM-based multi-agent framework for diagnosing and repairing flaky tests",
         ],
       },
     ],
@@ -657,9 +686,9 @@ const DICT: Record<Lang, Dict> = {
       p1a: "I'm a full-stack developer and data analyst who ships production software for the public sector — most recently engineering fiscal and tax solutions for ",
       sefaz: "SEFAZ/AC",
       p1b: ", the State Treasury of Acre. My work spans polished front-end interfaces, Java / Spring Boot microservices, and data pipelines that turn raw fiscal records into auditable insight.",
-      p2a: "On the academic side, I'm finishing a ",
+      p2a: "Academically, I completed my ",
       ufac: "Bachelor's in Information Systems at UFAC",
-      p2b: " (December 2025), with a thesis on the impact of Generative AI on higher education — and aiming for a Master's in Computer Vision. The academic track keeps me close to first principles: rigorous about correctness, evaluation, and edge cases.",
+      p2b: " (2025), with a thesis on the impact of Generative AI on higher education, and I'm now pursuing a Master's in Computer Science at UFAC, researching LLM-based multi-agent systems to diagnose and repair flaky tests. The academic track keeps me close to first principles: rigorous about correctness, evaluation, and edge cases.",
       eduSection: "Education",
     },
     skills: {
@@ -677,7 +706,7 @@ const DICT: Record<Lang, Dict> = {
           projects: ["IPM & Cattle Transit Dashboards", "Tucandeira System", "File Authenticator"],
           achievements: [
             "Built the middleware API (Java/Spring Boot) for the Tucandeira system, enabling GNRE guide automation and real-time PIX integration.",
-            "Created the File Authenticator (Python/CustomTkinter) with MD5 hashing, ensuring the legal integrity of audit data on physical media.",
+            "Created the File Authenticator (Python/CustomTkinter) with cryptographic hash verification and a FastAPI API, ensuring the legal integrity of audit data on physical media.",
             "Modeled strategic Tableau dashboards over massive State Revenue datasets, forming the foundation for fiscal decision-making.",
           ],
         },
@@ -735,13 +764,15 @@ interface ProjectMeta {
 
 const PROJECT_META: ProjectMeta[] = [
   { isConfidential: true,  Icon: FileText    },  // Tucandeira
+  { isConfidential: false, githubUrl: "https://github.com/I-Am-BrunoHFMelo/RefAgent-Python",             Icon: Boxes      },  // RefAgent-Python
   { isConfidential: true,  Icon: BarChart3   },  // Fiscal Dashboards
   { isConfidential: false, githubUrl: "https://tic-tac-boom-chi.vercel.app",                    Icon: Gamepad2   },
-  { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/autenticador_arquivos",            Icon: ShieldCheck },
+  { isConfidential: true,                                                                        Icon: ShieldCheck },  // Autenticador de Arquivos
   { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/SGCC-INSS-Estagio",               Icon: Monitor    },
   { isConfidential: true,  Icon: Boxes       },  // G-TRIB SEFAZ
-  { isConfidential: false, githubUrl: "https://github.com/webacademyufac/hands-on-ead-t2-moto-g",        Icon: Activity   },  // TaskNote Academy
+  { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/Tasknote-Academy",                 Icon: Activity   },  // TaskNote Academy
   { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/SGPS-WA",                         Icon: Users      },
+  { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/rogue-ducks-java",                 Icon: Gamepad2   },  // Rogue Ducks
   { isConfidential: false, githubUrl: "https://github.com/AdriasSouza/Adrias-Souza-Portifolio",          Icon: Globe      },  // Portfolio
 ];
 
@@ -771,6 +802,8 @@ const SKILL_GROUPS: Array<{ skills: SkillEntry[] }> = [
   ]},
   { skills: [
     { name: "Angular",      abbr: "Ng",  Icon: SiAngular     as SkillIcon },
+    { name: "React",        abbr: "Re",  Icon: SiReact       as SkillIcon },
+    { name: "Next.js",      abbr: "Nx",  Icon: SiNextdotjs   as SkillIcon },
     { name: "TypeScript",   abbr: "TS",  Icon: SiTypescript  as SkillIcon },
     { name: "Oracle APEX",  abbr: "AP",  Icon: Database      as SkillIcon },
     { name: "Tailwind CSS", abbr: "TW",  Icon: SiTailwindcss as SkillIcon },
